@@ -24,36 +24,50 @@ class MainActivity : AppCompatActivity() {
     /** Media Controller */
     val mediaController = MediaController(this)
 
-    /** TextView */
-    val title = binding.textTitle
+    /** Video View */
+    val videoView = binding.videoView
+
+    mediaController.setAnchorView( videoView )
 
     /** Buttons */
     val buttonVideo1 = binding.buttonVideo1
     val buttonVideo2 = binding.buttonVideo2
     val buttonVideo3 = binding.buttonVideo3
+
+
+    /** Submit button */
+    val input = binding.urlInput
+
+    /** Submit button */
+    val submitButton = binding.submitURI
+
+    /** Options buttons */
     val playButton = binding.playButton
     val pauseButton = binding.pauseButton
 
-    /** Video View */
-    val videoView = binding.videoView
-
+    val url = "https://www.videvo.net/videvo_files/converted/2016_01/preview/Forest_15_3b_Videvo.mov47209.webm"
+    val videoFile2: Uri = Uri.parse( url )
     val videoFile1: Uri = Uri.parse( "android.resource://$packageName/${ R.raw.video1 }" )
-    val videoFile2: Uri = Uri.parse( "https://cdn.videvo.net/videvo_files/video/free/2017-08/small_watermarked/170724_15_Setangibeach_preview.webm" )
-    val videoFile3: Uri = Uri.parse( "android.resource://$packageName/${ R.raw.video3 }" )
     val videoFile4: Uri = Uri.parse( "android.resource://$packageName/${ R.raw.video2 }" )
 
     videoView.setMediaController( mediaController )
 
+    submitButton.setOnClickListener {
+      val text = input.editText?.text.toString()
+      val videoFile: Uri = Uri.parse( text );
+      videoPlayer( videoFile, videoView )
+    }
+
     buttonVideo1.setOnClickListener {
-      videoPlayer( mediaController, videoFile1, videoView, title )
+      videoPlayer( videoFile1, videoView )
     }
 
     buttonVideo2.setOnClickListener {
-      videoPlayer( mediaController, videoFile2, videoView, title )
+      videoPlayer( videoFile2, videoView )
     }
 
     buttonVideo3.setOnClickListener {
-      videoPlayer( mediaController, videoFile3, videoView, title )
+      videoPlayer( videoFile4, videoView )
     }
 
     playButton.setOnClickListener { if ( !videoView.isPlaying ) { videoView.start() } }
@@ -62,22 +76,12 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun videoPlayer(
-    mediaController: MediaController,
     uri: Uri,
-    videoView: VideoView,
-    title: TextView,
+    videoView: VideoView
   ) {
     if ( videoView.isPlaying ) { videoView.stopPlayback(); }
 
-    Log.d("[DEBUG]", "$uri.path")
-
     videoView.setVideoURI( uri )
-
-    mediaController.setAnchorView( videoView )
-
-    val file = File("$uri")
-
-    title.text = file.name
 
     videoView.requestFocus()
 
